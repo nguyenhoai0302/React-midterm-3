@@ -1,10 +1,21 @@
-import axios from 'axios';
-import React, { useState } from 'react'
-import Users from './Users';
+import axios from "axios";
+import React, { useState, useEffect } from "react";
+import { useHistory, useLocation } from "react-router-dom";
+import Users from "./Users";
 
 const Search = () => {
-    const [text, setText] = useState("");
+    const history = useHistory();
+    const location = useLocation();
+    const query = new URLSearchParams(location.search);
+    const initialText = query.get("seach") || "";
+    const [text, setText] = useState(initialText);
     const [users, setUsers] = useState([]);
+
+    useEffect(() => {
+        if (initialText) {
+            searchUsers(initialText);
+        }
+    }, [initialText]);
 
     const searchUsers = async (text) => {
         try {
@@ -20,14 +31,14 @@ const Search = () => {
     const clearUsers = () => {
         setUsers([]);
     }
-
+    
     const onSubmit = (e) => {
         e.preventDefault();
         if (text === "") {
             alert("Please enter something");
         } else {
+            history.push(`/?seach=${text}`);
             searchUsers(text);
-            setText("");
         }
     };
 
@@ -48,4 +59,4 @@ const Search = () => {
     );
 };
 
-export default Search
+export default Search;
